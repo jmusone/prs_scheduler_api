@@ -6,7 +6,9 @@ from . import views
 urlpatterns = [
     path("", views.Health.as_view()),
     path("leagues/", views.LeaguesGenericView.as_view()),
-    path("leagues/<int:league_id>/", views.LeaguesByIdView.as_view())
+    path("leagues/<int:league_id>/", views.LeaguesByIdView.as_view()),
+    path("schedule/", views.GameDateTimesGenericView.as_view()),
+    path("schedule/<int:league_id>/", views.GameDateTimeByIdView.as_view())
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

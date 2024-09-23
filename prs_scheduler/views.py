@@ -1,11 +1,11 @@
 from rest_framework import status
-from rest_framework.decorators import api_view#, renderer_classes
 #from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import Leagues, GameDateTimes
 from .serializers import LeaguesSerializer, GameDateTimesSerializer
+from . import scraper
 
 # Create your views here.
 class Health(APIView):
@@ -48,4 +48,18 @@ class LeaguesByIdView(APIView):
     def delete(self, request, league_id, format=None):
         league = self.get_object(league_id)
         league.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+class GameDateTimesGenericView(APIView):
+    def get(self, request, format=None):
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+class GameDateTimeByIdView(APIView):
+    def get_object(self, league_id):
+            try:
+                return Leagues.objects.get(id = league_id)
+            except Leagues.DoesNotExist:
+                return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    def get(self, request, league_id, format=None):
         return Response(status=status.HTTP_204_NO_CONTENT)
