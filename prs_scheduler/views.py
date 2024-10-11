@@ -12,8 +12,6 @@ class Health(APIView):
     def get(self, request, format=None):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 class LeaguesGenericView(APIView):
     def get(self, request, format=None):
         leagues = Leagues.objects.all()
@@ -24,14 +22,15 @@ class LeaguesGenericView(APIView):
         serializer = LeaguesSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            league_id = serializer.validated_data.id
-            url = serializer.validated_data.scheduleLink
+            league_id = serializer.instance.id
+            url = serializer.instance.scheduleLink
             gameDateTimes = scraper.getAllGameTimesAndDates(url)
-
+            for game in gameDateTimes:
+                gameSerializer = GameDateTimesSerializer(data={"leagueId": league_id, "gameDateTime": game})
+                if gameSerializer.is_valid():
+                    gameSerializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 class LeaguesByIdView(APIView):
     def get_object(self, league_id):
@@ -58,20 +57,16 @@ class LeaguesByIdView(APIView):
         league.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 class GameDateTimesGenericView(APIView):
     def get(self, request, format=None):
         games = GameDateTimes.objects.all()
         serializer = GameDateTimesSerializer(games, many=True)
         return Response(serializer.data)
     
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 class GameDateTimeByIdView(APIView):
     def get_object(self, league_id):
             try:
-                return GameDateTimes.objects.get(leagueId = league_id)
+                return GameDateTimes.objects.filter(leagueId = league_id)
             except GameDateTimes.DoesNotExist:
                 return Response(status=status.HTTP_404_NOT_FOUND)
     
@@ -79,3 +74,4 @@ class GameDateTimeByIdView(APIView):
         games = self.get_object(league_id)
         serializer = GameDateTimesSerializer(games, many=True)
         return Response(serializer.data)
+    
