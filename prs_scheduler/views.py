@@ -2,6 +2,7 @@ from rest_framework import status
 #from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.reverse import reverse
 
 from .models import Leagues, GameDateTimes
 from .serializers import LeaguesSerializer, GameDateTimesSerializer
@@ -10,7 +11,10 @@ from . import scraper
 # Create your views here.
 class Health(APIView):
     def get(self, request, format=None):
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({
+            'Leagues': reverse('leagues-view', request=request, format=format),
+            'Games': reverse('schedule-view', request=request, format=format)
+        })
 
 class LeaguesGenericView(APIView):
     def get(self, request, format=None):
