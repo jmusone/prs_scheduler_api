@@ -15,8 +15,8 @@ This code provides a web scraper that grabs game datetimes from the [PSL](https:
      "scheduleLink": "https://pittsburghsportsleague.leaguelab.com/team/<team_code>/<team_name>"
  }
  ```
-- GET /prs_scheduler/leagues/<id>
-- PUT /prs_scheduler/leagues/<id>
+- GET /prs_scheduler/leagues/(league_id)
+- PUT /prs_scheduler/leagues/(league_id)
  ```
  {
      "league": "<league_name>",
@@ -26,8 +26,8 @@ This code provides a web scraper that grabs game datetimes from the [PSL](https:
      "scheduleLink": "https://pittsburghsportsleague.leaguelab.com/team/<team_code>/<team_name>"
  }
  ```
-- DELETE /prs_scheduler/leagues/<id>
+- DELETE /prs_scheduler/leagues/(league_id)
 
 ### Game DateTime API Calls:
 - GET /prs_scheduler/schedule/
-- GET /prs_scheduler/schedule/<league_id>
+- GET /prs_scheduler/schedule/(league_id)
