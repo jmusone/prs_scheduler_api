@@ -44,15 +44,16 @@ def getAllGameTimesAndDates(url):
         combinedDateTime.append(datetime.strptime(dateTimeString, "%A, %B %d %Y: %I:%M %p"))
     return combinedDateTime
 
-def getNextGameTimeAndDate(url):
-    gameDates = getGameDates(url)
-    currDate = datetime.today().strftime("%A, %B %d %Y")
-    for date in gameDates:
-        strpDate = datetime.strptime(date, "%A, %B %d %Y").strftime("%A, %B %d %Y")
-        if strpDate > currDate:
-            return date
+
+#def getNextGameTimeAndDate(url):
+#    gameDates = getGameDates(url)
+#    currDate = datetime.today().strftime("%A, %B %d %Y")
+#    for date in gameDates:
+#        strpDate = datetime.strptime(date, "%A, %B %d %Y").strftime("%A, %B %d %Y")
+#        if strpDate > currDate:
+#            return date
     #this is just an assumption where if no next date is found, the season will start next year. Therefore we can assume the first game is the next one
     #this assumption *doesn't* work if the url isn't updated and we're looking at a past season. 
     #I think the way around this would be somehow scraping the year from the website and comparing it to the current year from currDate
     #ALSO this does not account for cancelled games!
-    return gameDates[0]
+#    return gameDates[0]
