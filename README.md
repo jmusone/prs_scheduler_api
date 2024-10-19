@@ -34,3 +34,9 @@ This code provides a web scraper that grabs game datetimes from the [PSL](https:
 - GET schedule/next/
 - GET schedule/next/(league_id)
 - GET schedule/gamesin/(days)
+
+## Running the API:
+```
+prs_scheduler_api % docker build -t prs_scheduler_api .
+docker run -p 8000:8000 prs_scheduler_api
+```
