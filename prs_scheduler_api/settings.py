@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "rest_framework",
-    "prs_scheduler",
+    #'rest_framework.authtoken',
+    "prs_scheduler"
 ]
 
 MIDDLEWARE = [

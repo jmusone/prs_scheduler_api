@@ -18,5 +18,6 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path("prs_scheduler/", include("prs_scheduler.urls"))
+    path("prs_scheduler/", include("prs_scheduler.urls")),
+    #path("scheduler_auth/", include("prs_scheduler_api.urls"))
 ]

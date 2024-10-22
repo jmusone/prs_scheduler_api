@@ -1,8 +1,10 @@
-from rest_framework import status
+from rest_framework import status#, permissions
 #from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.reverse import reverse
+
+from bs4 import BeautifulSoup
 
 from datetime import datetime, timedelta
 from django.utils import timezone
@@ -11,6 +13,7 @@ from .models import Leagues, GameDateTimes
 from .serializers import LeaguesSerializer, GameDateTimesSerializer
 from . import scraper
 
+#permission_classes = [permissions.IsAuthenticated]
 # Create your views here.
 class Health(APIView):
     def get(self, request, format=None):
@@ -26,12 +29,18 @@ class LeaguesGenericView(APIView):
         return Response(serializer.data)
     
     def post(self, request, format=None):
-        serializer = LeaguesSerializer(data=request.data)
+        page = urlopen(request.data.scheduleLink)
+        html = page.read().decode("utf-8")
+        soup = BeautifulSoup(html, "html.parser")  
+        leagueInfo = scraper.getLeagueInformation(soup)  
+        leagueInfo["scheduleLink"] = request.data.scheduleLink
+        serializer = LeaguesSerializer(data=leagueInfo)
+        
         if serializer.is_valid():
             serializer.save()
             league_id = serializer.instance.id
             url = serializer.instance.scheduleLink
-            gameDateTimes = scraper.getAllGameTimesAndDates(url)
+            gameDateTimes = scraper.getAllGameTimesAndDates(soup)
             for game in gameDateTimes:
                 gameSerializer = GameDateTimesSerializer(data={"leagueId": league_id, "gameDateTime": game})
                 if gameSerializer.is_valid():
