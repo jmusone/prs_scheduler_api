@@ -1,5 +1,3 @@
-from bs4 import BeautifulSoup
-from urllib.request import urlopen
 from datetime import datetime
 import re
 
@@ -38,7 +36,7 @@ def getAllGameTimesAndDates(url):
         combinedDateTime.append(datetime.strptime(dateTimeString, "%A, %B %d %Y: %I:%M %p"))
     return combinedDateTime
 
-def getLeagueInformation():
+def getLeagueInformation(soup):
     leagueInfo={}
 
     #get team name

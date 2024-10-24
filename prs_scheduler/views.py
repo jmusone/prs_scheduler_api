@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.reverse import reverse
 
 from bs4 import BeautifulSoup
+from urllib.request import urlopen
 
 from datetime import datetime, timedelta
 from django.utils import timezone
@@ -29,13 +30,14 @@ class LeaguesGenericView(APIView):
         return Response(serializer.data)
     
     def post(self, request, format=None):
-        page = urlopen(request.data.scheduleLink)
+        print(request)
+        page = urlopen(request.data.get("scheduleLink"))
         html = page.read().decode("utf-8")
         soup = BeautifulSoup(html, "html.parser")  
         leagueInfo = scraper.getLeagueInformation(soup)  
-        leagueInfo["scheduleLink"] = request.data.scheduleLink
+        leagueInfo["scheduleLink"] = request.data.get("scheduleLink")
         serializer = LeaguesSerializer(data=leagueInfo)
-        
+
         if serializer.is_valid():
             serializer.save()
             league_id = serializer.instance.id
