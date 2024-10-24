@@ -37,6 +37,6 @@ This code provides a web scraper that grabs game datetimes from the [PSL](https:
 
 ## Running the API:
 ```
-prs_scheduler_api % docker build -t prs_scheduler_api .
+docker build -t prs_scheduler_api .
 docker run -p 8000:8000 prs_scheduler_api
 ```
