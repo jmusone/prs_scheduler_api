@@ -8,10 +8,6 @@ This code provides a web scraper that grabs game datetimes from the [PSL](https:
 - POST /prs_scheduler/leagues/
  ```
  {
-     "league": "<league_name>",
-     "location": "<location>",
-     "sport": "<sport>",
-     "teamName": "<team_name>",
      "scheduleLink": "https://pittsburghsportsleague.leaguelab.com/team/<team_code>/<team_name>"
  }
  ```
