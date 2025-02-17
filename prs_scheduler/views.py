@@ -1,9 +1,11 @@
-from rest_framework import status#, permissions
-#from rest_framework.renderers import JSONRenderer
+from rest_framework import status, permissions, generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.authtoken.models import Token
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.reverse import reverse
-
+from django.contrib.auth import authenticate
+import time
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
 
@@ -11,26 +13,38 @@ from datetime import datetime, timedelta
 from django.utils import timezone
 
 from .models import Leagues, GameDateTimes
-from .serializers import LeaguesSerializer, GameDateTimesSerializer
+from .serializers import LeaguesSerializer, GameDateTimesSerializer, UserSerializer
 from . import scraper
 
-#permission_classes = [permissions.IsAuthenticated]
 # Create your views here.
 class Health(APIView):
     def get(self, request, format=None):
         return Response({
             'Leagues': reverse('leagues-view', request=request, format=format),
-            'Games': reverse('schedule-view', request=request, format=format)
+            'Games': reverse('schedule-view', request=request, format=format),
+            'Login': reverse('login-view', request=request, format=format)
         })
+class UserRegistration(generics.CreateAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [permissions.AllowAny]
 
+class UserLoginView(APIView):
+    def post(self, request):
+        user = authenticate(username=request.headers['Username'], password=request.headers['Password'])
+        if user:
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({'token': token.key})
+        else:
+            return Response({'error': 'Invalid credentials'}, status=401)
+        
 class LeaguesGenericView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request, format=None):
         leagues = Leagues.objects.all()
         serializer = LeaguesSerializer(leagues, many=True)
         return Response(serializer.data)
     
     def post(self, request, format=None):
-        print(request)
         page = urlopen(request.data.get("scheduleLink"))
         html = page.read().decode("utf-8")
         soup = BeautifulSoup(html, "html.parser")  
@@ -57,6 +71,7 @@ def get_object(self, league_id):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
 class LeaguesByIdView(APIView):
+    permission_classes = [IsAuthenticated]
     def get_object(self, league_id):
         try:
             return Leagues.objects.get(id = league_id)
@@ -88,6 +103,7 @@ class GameDateTimesGenericView(APIView):
         return Response(serializer.data)
     
 class GameDateTimeByIdView(APIView):
+    permission_classes = [IsAuthenticated]
     def get_object(self, league_id):
         try:
             return GameDateTimes.objects.filter(leagueId = league_id)

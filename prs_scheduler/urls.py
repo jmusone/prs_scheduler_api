@@ -5,6 +5,7 @@ from . import views
 
 urlpatterns = [
     path("", views.Health.as_view()),
+    path("login/", views.UserLoginView.as_view(), name="login-view"),
     path("leagues/", views.LeaguesGenericView.as_view(), name='leagues-view'),
     path("leagues/<int:league_id>/", views.LeaguesByIdView.as_view(), name='leagues-by-id-view'),
     path("schedule/", views.GameDateTimesGenericView.as_view(), name='schedule-view'),
